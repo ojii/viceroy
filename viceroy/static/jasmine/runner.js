@@ -1,10 +1,10 @@
-window.pjtvs_start = function(){
+window.viceroy_start = function(){
     var PJTVSReporter = function(){
         this.results = [];
     };
     PJTVSReporter.prototype = new jasmine.JsApiReporter({});
     PJTVSReporter.prototype.jasmineDone = function(){
-        window.pjtvs_done(this.results);
+        window.viceroy_done(this.results);
     };
 
     PJTVSReporter.prototype.specDone = function(result) {
