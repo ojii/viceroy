@@ -26,3 +26,14 @@ def build_test_cases(name, results):
     for i, result in enumerate(results):
         attrs['test_method'.format(i)] = test_method_factory(result)
         yield type(name, (unittest.TestCase,), attrs)('test_method')
+
+
+def timeout_factory(exc):
+    def test_timed_out(self):
+        raise exc
+    return test_timed_out
+
+
+def build_timeout_test_case(name, exc):
+    attrs = {'test_method': timeout_factory(exc)}
+    yield type(name, (unittest.TestCase, ), attrs)('test_method')
