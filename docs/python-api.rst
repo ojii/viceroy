@@ -36,6 +36,16 @@ Reference
 
         This class is an abstract base class and cannot be instantiated.
 
+        .. py:attribute:: timeout
+
+            Integer amount of seconds used as timeout when running Javascript.
+            Default: ``10``.
+
+        .. py:attribute:: driver_class
+
+            Selenium web driver class to use, defaults to the firefox web
+            driver.
+
         .. py:attribute:: scripts
 
             A list of absolute file paths to Javascript dependencies required
