@@ -49,14 +49,13 @@ class BaseTestCase(unittest.TestCase):
 
 
 class BaseTestSuite(unittest.TestSuite, metaclass=abc.ABCMeta):
-    test_file_path = abc.abstractproperty()
-    setup_script = None
-    runner_script = None
     scripts = []
+    setup_script = None
+    test_file_path = abc.abstractproperty()
+    runner_script = None
 
     driver_class = webdriver.WebDriver
     viceroy_class = Viceroy
-    index_url = '/static/index.html'
     timeout = 100
 
     def __init__(self):
@@ -94,8 +93,9 @@ class BaseTestSuite(unittest.TestSuite, metaclass=abc.ABCMeta):
         finally:
             browser.quit()
 
-    def get_results(self):
-        raise NotImplementedError()
+    @abc.abstractmethod
+    def get_results(self, results):
+        pass
 
 
 class BaseQunitTestSuite(BaseTestSuite, metaclass=abc.ABCMeta):
