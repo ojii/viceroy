@@ -29,66 +29,66 @@ Reference
 .. py:module:: viceroy.api
 
 
-    .. py:class:: BaseTestSuite
+.. py:class:: BaseTestSuite
 
-        Base test suite that handles selenium web drivers and calls the
-        scripts defined.
+    Base test suite that handles selenium web drivers and calls the
+    scripts defined.
 
-        This class is an abstract base class and cannot be instantiated.
+    This class is an abstract base class and cannot be instantiated.
 
-        .. py:attribute:: timeout
+    .. py:attribute:: timeout
 
-            Integer amount of seconds used as timeout when running Javascript.
-            Default: ``10``.
+        Integer amount of seconds used as timeout when running Javascript.
+        Default: ``10``.
 
-        .. py:attribute:: driver_class
+    .. py:attribute:: driver_class
 
-            Selenium web driver class to use, defaults to the firefox web
-            driver.
+        Selenium web driver class to use, defaults to the firefox web
+        driver.
 
-        .. py:attribute:: scripts
+    .. py:attribute:: scripts
 
-            A list of absolute file paths to Javascript dependencies required
-            to run the tests.
+        A list of absolute file paths to Javascript dependencies required
+        to run the tests.
 
-        .. py:attribute:: setup_script
+    .. py:attribute:: setup_script
 
-            Defaults to ``None``. If set to an absolute file path, this script
-            will be loaded after :py:attr:`scripts` are loaded.
+        Defaults to ``None``. If set to an absolute file path, this script
+        will be loaded after :py:attr:`scripts` are loaded.
 
-        .. py:attribute:: test_file_path
+    .. py:attribute:: test_file_path
 
-            Abstract property that has to be set to an absolute file path when
-            building actual test cases.
+        Abstract property that has to be set to an absolute file path when
+        building actual test cases.
 
-            This script is loaded after :py:attr:`setup_script`.
+        This script is loaded after :py:attr:`setup_script`.
 
-        .. py:attribute:: runner_script
+    .. py:attribute:: runner_script
 
-            Defaults to ``None``. If set to an absolute file path, this script
-            will be loaded after :py:attr:`test_file_path` is loaded.
+        Defaults to ``None``. If set to an absolute file path, this script
+        will be loaded after :py:attr:`test_file_path` is loaded.
 
-            This script is where you should implement custom logic to run the
-            tests, if the test script doesn't do so automatically.
+        This script is where you should implement custom logic to run the
+        tests, if the test script doesn't do so automatically.
 
-        .. py:method:: get_results(results) -> iterator:
+    .. py:method:: get_results(results) -> iterator:
 
-            Abstract method that must be implemented by subclasses.
+        Abstract method that must be implemented by subclasses.
 
-            Given a ``results`` object that was passed from Javascript via
-            :js:func:`Viceroy.done`, this method must return an iterator that
-            yields :py:class:`viceroy.utils.Result` or
-            :py:class:`viceroy.utils.ComparisonResult` objects.
+        Given a ``results`` object that was passed from Javascript via
+        :js:func:`Viceroy.done`, this method must return an iterator that
+        yields :py:class:`viceroy.utils.Result` or
+        :py:class:`viceroy.utils.ComparisonResult` objects.
 
 
 .. py:module:: viceroy.utils
 
-    .. py:class:: Result(name, passed, message)
+.. py:class:: Result(name, passed, message)
 
-        A namedtuple which takes the ``name`` of the test run, a boolean flag
-        whether it ``passed`` or not and a string ``message`` as arguments.
+    A namedtuple which takes the ``name`` of the test run, a boolean flag
+    whether it ``passed`` or not and a string ``message`` as arguments.
 
-    .. py:class:: ComparisonResult(name, passed, message, expected, actual)
+.. py:class:: ComparisonResult(name, passed, message, expected, actual)
 
-        Similar to :py:class:`Result``, but takes two additional arguments,
-        ``expected`` and ``actual`` to indicate why a comparison failed.
+    Similar to :py:class:`Result``, but takes two additional arguments,
+    ``expected`` and ``actual`` to indicate why a comparison failed.
