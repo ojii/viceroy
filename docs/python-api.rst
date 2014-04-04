@@ -71,6 +71,10 @@ Reference
         This script is where you should implement custom logic to run the
         tests, if the test script doesn't do so automatically.
 
+    .. py:attribute:: expected_failures
+
+        A list of expected failures.
+
     .. py:method:: get_results(results) -> iterator:
 
         Abstract method that must be implemented by subclasses.

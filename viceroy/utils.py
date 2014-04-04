@@ -21,10 +21,14 @@ def test_method_factory(result):
     return test_method
 
 
-def build_test_cases(name, results):
-    attrs = {}
-    for i, result in enumerate(results):
-        attrs['test_method'.format(i)] = test_method_factory(result)
+def build_test_cases(name, results, expected_failures):
+    for result in results:
+        method = test_method_factory(result)
+        if result.name in expected_failures:
+            method = unittest.expectedFailure(method)
+        attrs = {
+            'test_method': method
+        }
         yield type(name, (unittest.TestCase,), attrs)('test_method')
 
 

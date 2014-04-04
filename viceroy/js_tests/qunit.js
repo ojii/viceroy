@@ -1,9 +1,6 @@
-test( "hello test", function() {
-  console.log('running test 1');
+test( "hello fail", function() {
   deepEqual( 1 , "1", "Failed!" );
 });
-test( "hello test", function() {
-  console.log('running test 2');
+test( "hello success", function() {
   equal( 1 , "1", "Success!" );
 });
-console.log("TESTS LOADED");

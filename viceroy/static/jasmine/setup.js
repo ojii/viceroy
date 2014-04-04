@@ -14,7 +14,7 @@
                 tmp = result.failedExpectations[i];
                 this.results.push({
                     'passed': false,
-                    'name': result.description + ' (' + (i + 1) + ')',
+                    'name': result.description,
                     'message': tmp.message,
                     'actual': tmp.actual,
                     'expected': tmp.expected

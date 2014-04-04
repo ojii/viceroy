@@ -58,6 +58,8 @@ class BaseTestSuite(unittest.TestSuite, metaclass=abc.ABCMeta):
     viceroy_class = Viceroy
     timeout = 100
 
+    expected_failures = []
+
     def __init__(self):
         self._test_cases = None
         self.root = os.path.dirname(self.test_file_path)
@@ -86,8 +88,13 @@ class BaseTestSuite(unittest.TestSuite, metaclass=abc.ABCMeta):
             if self.runner_script is not None:
                 scripts.append(self.runner_script)
             test_results = viceroy.run(scripts)
-            results = self.get_results(test_results)
-            return build_test_cases(self.__class__.__name__, results)
+            results = list(self.get_results(test_results))
+            import pprint, sys;pprint.pprint(results, stream=sys.stderr)
+            return build_test_cases(
+                self.__class__.__name__,
+                results,
+                self.expected_failures
+            )
         except TimeoutException as exc:
             return build_timeout_test_case(self.__class__.__name__, exc)
         finally:
