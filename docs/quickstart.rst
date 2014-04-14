@@ -8,53 +8,66 @@ library you are using.
 
 
 ******
-Common
+Basics
 ******
 
-The way to run your tests is to define a test suite, by subclassing the
-appropriate base class for your library, and set
-:py:attr`viceroy.api.BaseTestSuite.test_file_path` to a path of your Javascript
-file containing the tests. You may set
-:py:attr`viceroy.api.BaseTestSuite.expected_failures` to a list of tests that
-are expected to fail (if your Javascript library supports this natively, you
-can ignore that attribute).
+At the core of viceroy is
+:py:meth:`viceroy.api.ViceroyTestCase.assertInBrowser`, which runs a snippet of
+Javascript and reports the result via standard Python unittest methods.
 
 
-*****
-QUnit
-*****
+**************
+QUnit Examples
+**************
 
-Let's assume you have a Python project with a ``tests.py`` file containing
-your unit tests and next to it a ``tests.js`` file containing your QUnit tests.
+.. code-block:: python
 
-The following test suite (in your ``tests.py`` file) would load those QUnit
-tests::
+    import unittest
 
-    import os
-
-    from viceroy.api import BaseQunitTestSuite
+    from viceroy.api import QUnitTestCase
 
 
     class MyQUnitTests(BaseQunitTestSuite):
-        test_file_path = os.path.join(os.path.dirname(__file__), 'tests.js')
+        @unittest.expectedFailure
+        def test_an_expected_failure(self):
+            self.assertInBrowser("""
+                test("this will fail", function(){
+                    deepEqual(1, "1", "1 is not equal '1'!");
+                });
+            """)
+
+        def test_something_that_will_pass(self):
+            self.assertInBrowser("""
+                test("this will pass", function(){
+                    equal(1, "1", "1 is not equal '1'!");
+                });
+            """)
 
 
-*******
-Jasmine
-*******
+****************
+Jasmine Examples
+****************
 
-Let's assume you have a Python project with a ``tests.py`` file containing
-your unit tests and next to it a ``tests.js`` file containing your Jasmine
-tests.
+.. code-block:: python
 
-The following test suite (in your ``tests.py`` file) would load those Jasmine
-tests::
+    import unittest
 
-    import os
+    from viceroy.api import JasmineTestCase
 
-    from viceroy.api import BaseJasminTestSuite
+    class JasmineTests(JasmineTestCase):
+        suite_name = "A suite"
 
+        def test_spec_success(self):
+            self.assertInBrowser("""
+            it("contains spec with an expectation", function() {
+                expect(true).toBe(true);
+            });
+            """)
 
-    class MyQUnitTests(BaseJasminTestSuite):
-        test_file_path = os.path.join(os.path.dirname(__file__), 'tests.js')
-
+        @unittest.expectedFailure
+        def test_spec_fail(self):
+            self.assertInBrowser("""
+            it("contains spec with an failing expectation", function() {
+                expect(true).toBe(false);
+            });
+            """)

@@ -8,7 +8,7 @@ import os
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 STATIC = os.path.join(BASEDIR, 'static')
-Result = collections.namedtuple('Result', 'failed error')
+Result = collections.namedtuple('Result', 'failed message')
 
 
 def static(path, content_type=None):

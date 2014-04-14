@@ -21,7 +21,8 @@ You need to install the `selenium`_ Python package.
 Installation
 ************
 
-Simply ``pip install viceroy`` in your `virtualenv`_.
+Simply ``pip install viceroy`` in your `virtualenv`_, assuming you have the
+dependencies of `selenium`_ installed and a C compiler available.
 
 
 .. _selenium: https://pypi.python.org/pypi/selenium

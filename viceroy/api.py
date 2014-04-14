@@ -9,7 +9,6 @@ from .server import JasmineServer
 
 class ViceroyTestCase(unittest.TestCase):
     server_class = Server
-    url = '/'
 
     def get_driver(self):
         from selenium.webdriver.firefox import webdriver
@@ -30,14 +29,12 @@ class ViceroyTestCase(unittest.TestCase):
             driver = self.get_driver()
             try:
                 with self.run_server(javascript) as httpd:
-                    driver.get('http://localhost:{}{}'.format(
-                        httpd.port, self.url
-                    ))
+                    driver.get('http://localhost:{}/'.format(httpd.port))
                     result = httpd.wait()
             finally:
                 driver.quit()
             if result.failed:
-                self.fail(result.error)
+                self.fail(result.message)
 
 
 class QUnitTestCase(ViceroyTestCase):

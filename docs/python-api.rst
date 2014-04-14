@@ -6,21 +6,6 @@ If you wish to use an unsupported Javascript testing library, you can do so
 using the Javascript and Python APIs.
 
 
-************************
-Support a custom library
-************************
-
-Ideally, all you need to do is subclass :py:class:`viceroy.api.BaseTestSuite`,
-implement :py:meth:`viceroy.api.BaseTestSuite.get_results`, define what
-:py:class:`viceroy.api.BaseTestSuite.scripts` (of your testing framework) need
-to be loaded, optionally set :py:class:`viceroy.api.BaseTestSuite.setup_script`
-to a script that is run before the test script is executed and
-:py:class:`viceroy.api.BaseTestSuite.runner_script` to a script that runs the
-tests.
-
-One of those scripts must call :js:func:`Viceroy.done` once the tests are done.
-
-
 *********
 Reference
 *********
@@ -29,70 +14,119 @@ Reference
 .. py:module:: viceroy.api
 
 
-.. py:class:: BaseTestSuite
+.. py:class:: ViceroyTestCase
 
-    Base test suite that handles selenium web drivers and calls the
+    Base test case that handles selenium web drivers and calls the
     scripts defined.
 
-    This class is an abstract base class and cannot be instantiated.
+    .. py:attribute:: server_class
 
-    .. py:attribute:: timeout
+        Server class to use. Default is :py:class:`viceroy.server.Server`. You
+        may want to overwrite this to support custom Javascript frameworks or
+        to support custom server side web frameworks.
 
-        Integer amount of seconds used as timeout when running Javascript.
-        Default: ``10``.
+    .. py:method:: get_driver(results):
 
-    .. py:attribute:: driver_class
+        Returns an instantiated selenium web driver. Defaults to the Firefox
+        web driver.
 
-        Selenium web driver class to use, defaults to the firefox web
-        driver.
+    .. py:method:: run_server(javascript):
 
-    .. py:attribute:: scripts
+        A context manager that runs a server for the given Javascript snippet.
+        Yields the server object.
 
-        A list of absolute file paths to Javascript dependencies required
-        to run the tests.
+    .. py:method:: assertInBrowser(javascript):
 
-    .. py:attribute:: setup_script
-
-        Defaults to ``None``. If set to an absolute file path, this script
-        will be loaded after :py:attr:`scripts` are loaded.
-
-    .. py:attribute:: test_file_path
-
-        Abstract property that has to be set to an absolute file path when
-        building actual test cases.
-
-        This script is loaded after :py:attr:`setup_script`.
-
-    .. py:attribute:: runner_script
-
-        Defaults to ``None``. If set to an absolute file path, this script
-        will be loaded after :py:attr:`test_file_path` is loaded.
-
-        This script is where you should implement custom logic to run the
-        tests, if the test script doesn't do so automatically.
-
-    .. py:attribute:: expected_failures
-
-        A list of expected failures.
-
-    .. py:method:: get_results(results) -> iterator:
-
-        Abstract method that must be implemented by subclasses.
-
-        Given a ``results`` object that was passed from Javascript via
-        :js:func:`Viceroy.done`, this method must return an iterator that
-        yields :py:class:`viceroy.utils.Result` or
-        :py:class:`viceroy.utils.ComparisonResult` objects.
+        Run the javascript snippet given in the browser and assert it passes.
 
 
-.. py:module:: viceroy.utils
+.. py:class:: QUnitTestCase
 
-.. py:class:: Result(name, passed, message)
+    Subclasses :py:class:`ViceroyTestCase` to run QUnit tests.
 
-    A namedtuple which takes the ``name`` of the test run, a boolean flag
-    whether it ``passed`` or not and a string ``message`` as arguments.
 
-.. py:class:: ComparisonResult(name, passed, message, expected, actual)
+.. py:class:: JasmineTestCase
 
-    Similar to :py:class:`Result``, but takes two additional arguments,
-    ``expected`` and ``actual`` to indicate why a comparison failed.
+    Subclass :py:class:`ViceroyTestCase` to run Jasmine tests.
+
+
+.. py:module:: viceroy.server
+
+
+.. py:class:: Result(failed, message)
+
+    A result of a test run in the browser. Usually you don't need to manually
+    build these but can instead rely on :py:class:`ServerProcess.notify` to
+    build it for you.
+
+.. py:function:: static(path, content_type=None):
+
+    Utility function to build tuples used in :py:class:`Server.urls` given a
+    path to a file on the local filesystem. ``content_type`` will be guess via
+    the :py:mod:`mimetypes` modules if set to ``None``.
+
+.. py:class:: Server(javascript)
+
+    Class that controls the HTTP server.
+
+    .. py:attribute:: port
+
+        Port number of the server. Is ``None`` until :py:meth:`run_async` is
+        called.
+
+    .. py:attribute:: index_html_path
+
+        Full path to the index html file.
+
+    .. py:attribute:: urls
+
+        Dictionary mapping urls to tuples of ``(b'response', 'content_type')``.
+
+        .. note::
+
+            The response **must** be bytes, not strings.
+
+    .. py:method:: setup_default_urls
+
+        Sets up ``'/'`` to point to :py:attr:`index_html_path` and
+        ``'/viceroy.js'`` to point to the viceroy Javascript file.
+        Overwrite this method if you want these to be mounted somewhere else.
+
+    .. py:method:: setup_javascript_url(javascript)
+
+        Maps the javascript snippet (given as a **string**) to the URL
+        ``'/tests.js'``. Overwrite this method if you want the Javascript to be
+        mounted on another URL.
+
+    .. py:method:: setup_extra_urls
+
+        Does nothing by default, but can be used by your subclasses to add more
+        URLs.
+
+
+    .. py:method:: wait(timeout=5)
+
+        Waits for the results, or ``timeout`` and returns the result.
+
+    .. py:method:: stop
+
+        Stops the server.
+
+    .. py:method:: run_async(timeout=5)
+
+        Runs the server. Will wait maximum of ``timeout`` seconds and sets the
+        :py:attr:`port` attribute to the port used by the server.
+
+
+.. py:class:: QUnitServer
+
+    Subclass of :py:class:`Server` used by
+    :py:class:`viceroy.api.QUnitTestCase`. Mounts the QUnit Javascript files
+    to ``/qunit/``.
+
+
+.. py:class:: JasmineServer
+
+    Subclass of :py:class:`Server` used by
+    :py:class:`viceroy.api.JasmineTestCase`. Mounts the Jasmin Javascript files
+    to ``/jasmine/``.
