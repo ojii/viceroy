@@ -14,5 +14,5 @@ setup(
     install_requires=[
         'selenium'
     ],
-    test_suite='viceroy.tests.suite'
+    test_suite='viceroy.tests'
 )

@@ -1,22 +1,54 @@
-import os
+import unittest
 
-from viceroy.api import BASEDIR
-from viceroy.api import BaseJasminTestSuite
-from viceroy.api import BaseQunitTestSuite
-from viceroy.api import auto_load_tests
-from viceroy.api import auto_suite
+from viceroy.api import JasmineTestCase
+from viceroy.api import QUnitTestCase
+from viceroy.api import ViceroyTestCase
 
 
-class QunitTests(BaseQunitTestSuite):
-    test_file_path = os.path.join(BASEDIR, 'js_tests', 'qunit.js')
-    expected_failures = ["hello fail"]
+class DummyTests(ViceroyTestCase):
+    @unittest.expectedFailure
+    def test_fail(self):
+        self.assertInBrowser("""
+        viceroy_notify(true, 'test message');
+        """)
+
+    def test_success(self):
+        self.assertInBrowser("""
+        viceroy_notify(false, 'test message');
+        """)
 
 
-class JasmineTests(BaseJasminTestSuite):
-    test_file_path = os.path.join(BASEDIR, 'js_tests', 'jasmine.js')
-    expected_failures = ["contains spec with an failing expectation"]
-
-
-load_tests = auto_load_tests(locals())
-
-suite = auto_suite(locals())
+# class QunitTests(QUnitTestCase):
+#     @unittest.expectedFailure
+#     def test_fail(self):
+#         self.assertInBrowser("""
+#         test( "hello fail", function() {
+#           deepEqual( 1 , "1", "Failed!" );
+#         });
+#         """)
+#
+#     def test_success(self):
+#         self.assertInBrowser("""
+#         test( "hello success", function() {
+#           equal( 1 , "1", "Success!" );
+#         });
+#         """)
+#
+#
+# class JasmineTests(JasmineTestCase):
+#     suite_name = "A suite"
+#
+#     def test_spec_success(self):
+#         self.assertInBrowser("""
+#         it("contains spec with an expectation", function() {
+#             expect(true).toBe(true);
+#         });
+#         """)
+#
+#     @unittest.expectedFailure
+#     def test_spec_fail(self):
+#         self.assertInBrowser("""
+#         it("contains spec with an failing expectation", function() {
+#             expect(true).toBe(false);
+#         });
+#         """)

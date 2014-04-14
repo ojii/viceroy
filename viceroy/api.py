@@ -1,166 +1,168 @@
-import inspect
-import abc
+import contextlib
+import http
+import json
+import threading
+import collections
 import os
 import unittest
-from selenium.common.exceptions import TimeoutException
-
-from selenium.webdriver.firefox import webdriver
-from selenium.webdriver.support.wait import WebDriverWait
-
-from viceroy.utils import build_test_cases
-from viceroy.utils import build_timeout_test_case
-from viceroy.utils import ComparisonResult
-from viceroy.utils import Result
 
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 STATIC = os.path.join(BASEDIR, 'static')
+Result = collections.namedtuple('Result', 'failed error')
 
 
-class Viceroy(object):
-    viceroy_path = os.path.join(STATIC, 'viceroy.js')
+def url(src):
+    def decorator(meth):
+        meth.viceroy_src = src
+        return meth
+    return decorator
 
-    def __init__(self, browser, timeout):
-        self.browser = browser
-        self.timeout = timeout
 
-    def _js(self, script):
-        return self.browser.execute_script(script)
-
-    def load(self, src):
-        with open(src) as fobj:
-            self._js(fobj.read())
-
-    def run(self, scripts):
-        self.load(self.viceroy_path)
-        for script in scripts:
-            self.load(script)
-        self._wait('return Viceroy.is_done();')
-        return self._js('return Viceroy.get_results();')
-
-    def _wait(self, until):
-        WebDriverWait(self.browser, self.timeout).until(
-            lambda _: self._js(until)
+class RequestHandler(http.server.BaseHTTPRequestHandler):
+    def do_GET(self):
+        response, content_type = self.server_thread.urls.get(
+            self.path, (None, None)
         )
+        if response and content_type:
+            status = 200
+        else:
+            response = b'Not found'
+            content_type = 'text/plain'
+            status = 404
+        self._send(status, response, content_type)
+
+    def do_POST(self):
+        if self.path == '/viceroy-api/':
+            raw_data = self.rfile.read()
+            result = json.loads(raw_data.decode('utf8'))
+            self.server_thread.notify(result)
+        else:
+            self._send(404, b'', 'text/plain')
+
+    def _send(self, status, response, content_type):
+        self.send_response(status)
+        self.send_header('Content-Type', content_type)
+        self.send_header('Content-Length', len(response))
+        self.end_headers()
+        self.wfile.write(response)
 
 
-class BaseTestCase(unittest.TestCase):
+class ServerThread(threading.Thread):
+    def __init__(self, port_event, done_event, urls):
+        self.port_event = port_event
+        self.done_event = done_event
+        self.port = None
+        self.result = None
+        self.server = None
+        self.urls = urls
+        super().__init__()
+
+    def run(self):
+        handler_class = type(
+            'Handler',
+            (RequestHandler,),
+            {'server_thread': self}
+        )
+        self.server = http.server.HTTPServer(('localhost', 0), handler_class)
+        self.port = self.server.server_port
+        self.port_event.set()
+        try:
+            self.server.serve_forever()
+        except Exception as exc:
+            self.result = Result(True, 'VICEROY:INTERNAL:{}'.format(exc))
+            self.done_event.set()
+
+    def terminate(self):
+        print('terminate')
+        if self.server is not None:
+            self.server.shutdown()
+            self.server.server_close()
+
+    def notify(self, result):
+        self.result = Result(result['failed'], result['message'])
+        print('notified')
+        self.done_event.set()
+
+
+class Server(object):
+    def __init__(self, javascript):
+        with open(os.path.join(STATIC, 'viceroy.js'), 'rb') as fobj:
+            viceroy = fobj.read()
+        with open(os.path.join(STATIC, 'viceroy.html'), 'rb') as fobj:
+            html = fobj.read()
+        self.urls = {
+            '/': (html, 'text/html'),
+            '/viceroy.js': (viceroy, 'application/javascript'),
+            '/tests.js': (javascript.encode('utf8'), 'application/javascript')
+        }
+        self.thread = None
+        self.port = None
+        self.port_event = threading.Event()
+        self.done_event = threading.Event()
+
+    def wait(self, timeout=5):
+        done = self.done_event.wait(timeout)
+        print('done')
+        if done:
+            print('done!')
+            return self.thread.result
+        else:
+            print('fail')
+            return Result(True, 'VICEROY:INTERNAL:Timeout')
+
+    def stop(self):
+        print('stop')
+        if self.thread is not None:
+            self.thread.terminate()
+            self.thread.join()
+
+    def run_async(self, timeout=5):
+        self.thread = ServerThread(
+            self.port_event,
+            self.done_event,
+            self.urls
+        )
+        self.thread.daemon = True
+        self.thread.start()
+        self.port_event.wait(timeout)
+        self.port = self.thread.port
+
+
+class ViceroyTestCase(unittest.TestCase):
+    server_class = Server
+    url = '/'
+
+    def get_driver(self):
+        from selenium.webdriver.firefox import webdriver
+        return webdriver.WebDriver()
+
+    @contextlib.contextmanager
+    def run_server(self, javascript):
+        server = self.server_class(javascript)
+        try:
+            server.run_async()
+            yield server
+        finally:
+            server.stop()
+
+    def assertInBrowser(self, javascript):
+        driver = self.get_driver()
+        try:
+            with self.run_server(javascript) as server:
+                driver.get('http://localhost:{}{}'.format(
+                    server.port, self.url
+                ))
+                result = server.wait()
+                if result.failed:
+                    self.fail(result.error)
+        finally:
+            driver.quit()
+
+
+class QUnitTestCase(ViceroyTestCase):
     pass
 
 
-class BaseTestSuite(unittest.TestSuite, metaclass=abc.ABCMeta):
-    scripts = []
-    setup_script = None
-    test_file_path = abc.abstractproperty()
-    runner_script = None
-
-    driver_class = webdriver.WebDriver
-    viceroy_class = Viceroy
-    timeout = 100
-
-    expected_failures = []
-
-    def __init__(self):
-        self._test_cases = None
-        self.root = os.path.dirname(self.test_file_path)
-        self.filename = os.path.basename(self.test_file_path)
-
-    def __repr__(self):
-        return '<{}>'.format(self.__class__.__name__)
-
-    def __iter__(self):
-        if self._test_cases is None:
-            self._test_cases = self._build()
-        for test_case in self._test_cases:
-            yield test_case
-
-    def _build(self):
-        if not self.test_file_path:
-            return []
-        browser = self.driver_class()
-        try:
-            viceroy = self.viceroy_class(browser, self.timeout)
-            scripts = []
-            scripts.extend(self.scripts)
-            if self.setup_script is not None:
-                scripts.append(self.setup_script)
-            scripts.append(self.test_file_path)
-            if self.runner_script is not None:
-                scripts.append(self.runner_script)
-            test_results = viceroy.run(scripts)
-            results = list(self.get_results(test_results))
-            import pprint, sys;pprint.pprint(results, stream=sys.stderr)
-            return build_test_cases(
-                self.__class__.__name__,
-                results,
-                self.expected_failures
-            )
-        except TimeoutException as exc:
-            return build_timeout_test_case(self.__class__.__name__, exc)
-        finally:
-            browser.quit()
-
-    @abc.abstractmethod
-    def get_results(self, results):
-        pass
-
-
-class BaseQunitTestSuite(BaseTestSuite, metaclass=abc.ABCMeta):
-    scripts = [
-        os.path.join(BASEDIR, 'static/qunit/qunit.js'),
-    ]
-    setup_script = os.path.join(BASEDIR, 'static/qunit/setup.js')
-    runner_script = os.path.join(BASEDIR, 'static/qunit/runner.js')
-
-    def get_results(self, results):
-        for result in results:
-            if 'expected' in result:
-                yield ComparisonResult(
-                    result['name'],
-                    result['result'],
-                    result['message'],
-                    result['expected'],
-                    result['actual'],
-                )
-            else:
-                yield Result(
-                    result['name'],
-                    result['result'],
-                    result['message'],
-                )
-
-
-class BaseJasminTestSuite(BaseTestSuite, metaclass=abc.ABCMeta):
-    scripts = [
-        os.path.join(BASEDIR, 'static/jasmine/jasmine.js'),
-        os.path.join(BASEDIR, 'static/jasmine/jasmine-html.js'),
-        os.path.join(BASEDIR, 'static/jasmine/boot.js'),
-    ]
-    setup_script = os.path.join(BASEDIR, 'static/jasmine/setup.js')
-    runner_script = os.path.join(BASEDIR, 'static/jasmine/runner.js')
-
-    def get_results(self, results):
-        for result in results:
-            yield ComparisonResult(
-                result['name'],
-                result['passed'],
-                result['message'],
-                result['expected'],
-                result['actual'],
-            )
-
-
-def auto_load_tests(attrs):
-    def load_tests(loader=None, tests=None, pattern=None):
-        return auto_suite(attrs)
-    return load_tests
-
-
-def auto_suite(attrs):
-    suite = unittest.TestSuite()
-    for obj in attrs.values():
-        if (isinstance(obj, type) and
-                not inspect.isabstract(obj) and
-                issubclass(obj, BaseTestSuite)):
-            suite.addTest(obj())
-    return suite
+class JasmineTestCase(ViceroyTestCase):
+    pass
