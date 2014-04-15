@@ -8,7 +8,7 @@ Viceroy Documentation
 #####################
 
 
-.. warnings::
+.. warning::
 
     This project is still in an early stage and quite a few things are not
     supported yet. Feel free to give it a try, but don't expect this to be

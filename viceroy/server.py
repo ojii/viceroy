@@ -24,6 +24,9 @@ def static(path, content_type=None):
 
 
 class RequestHandler(server.BaseHTTPRequestHandler):
+    def log_message(self, format, *args):
+        pass
+
     def do_GET(self):
         response, content_type = self.server_process.urls.get(
             self.path, (None, None)

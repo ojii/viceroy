@@ -59,11 +59,13 @@ Reference
     build these but can instead rely on :py:class:`ServerProcess.notify` to
     build it for you.
 
+
 .. py:function:: static(path, content_type=None):
 
     Utility function to build tuples used in :py:class:`Server.urls` given a
     path to a file on the local filesystem. ``content_type`` will be guess via
     the :py:mod:`mimetypes` modules if set to ``None``.
+
 
 .. py:class:: Server(javascript)
 
