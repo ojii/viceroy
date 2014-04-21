@@ -12,7 +12,12 @@ setup(
     author_email='ojiidotch@gmail.com',
     description='',
     install_requires=[
-        'selenium'
+        'selenium',
+        'slimit',
+    ],
+    test_requires=[
+        'Django',
+        'flask-testing',
     ],
     test_suite='viceroy.tests'
 )
