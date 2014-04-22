@@ -9,13 +9,16 @@ from .utils import extract
 from .utils import slimit_node_to_str
 
 
-VICEROY_JS_PATH = os.path.abspath(
-    os.path.join(
-        os.path.dirname(__file__),
-        'static',
-        'viceroy.js'
-    )
+VICEROY_ROOT = os.path.abspath(os.path.dirname(__file__))
+VICEROY_JS_PATH = os.path.join(
+    VICEROY_ROOT,
+    'static',
+    'viceroy.js'
 )
+
+
+class JavascriptError(Exception):
+    pass
 
 
 class ViceroyTestCase(unittest.TestCase):
@@ -95,7 +98,7 @@ def test_method_proxy(full_name, short_name):
         elif result['code'] == 'F':
             self.fail(result['message'])
         elif result['code'] == 'E':
-            raise Exception(result['message'])
+            raise JavascriptError(result['message'])
         elif result['code'] == 's':
             raise unittest.SkipTest(result['message'])
     test_method.__name__ = full_name
@@ -107,7 +110,7 @@ def build_test_case(class_name, source_file, framework,
     with open(source_file) as fobj:
         source = fobj.read()
 
-    test_method_names = framework(source)
+    test_method_names = set(framework(source))
 
     attrs = {'viceroy_source_file': source_file}
     for test_name in test_method_names:

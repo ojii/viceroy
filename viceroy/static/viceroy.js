@@ -30,7 +30,7 @@ VICEROY = {
         VICEROY.DONE = true;
     },
     'start_test': function(test_name){
-        VICEROY._test_name = test_name
+        VICEROY._test_name = test_name;
     },
     '_handle_error': function(msg, url, lineno){
         VICEROY.store_result(

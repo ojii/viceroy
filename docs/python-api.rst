@@ -91,7 +91,7 @@ Reference
     .. py:method:: setup_default_urls
 
         Sets up ``'/'`` to point to :py:attr:`index_html_path` and
-        ``'/viceroy.js'`` to point to the viceroy Javascript file.
+        ``'/success.js'`` to point to the viceroy Javascript file.
         Overwrite this method if you want these to be mounted somewhere else.
 
     .. py:method:: setup_javascript_url(javascript)
