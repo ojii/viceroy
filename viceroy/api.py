@@ -52,7 +52,6 @@ class ViceroyTestCase(unittest.TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.viceroy_cache = cls.viceroy_get_results()
-        print(cls.viceroy_cache)
 
     @classmethod
     def tearDownClass(cls):
@@ -84,7 +83,6 @@ def build_test_case(class_name, source_file, framework,
         source = fobj.read()
 
     test_method_names = set(framework(source))
-    print(test_method_names)
 
     attrs = {'viceroy_source_file': source_file}
     for test_name in test_method_names:

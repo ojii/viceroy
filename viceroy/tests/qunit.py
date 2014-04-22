@@ -29,10 +29,17 @@ class QUnitBase(ViceroyFlaskTestCase):
     viceroy_flask_app = app
 
 
-QUnitBaseTests = build_test_case(
+build_qunit_test = lambda name: build_test_case(
     'QUnitBaseTests',
-    os.path.join(QUNIT_DIR, 'test.js'),
+    os.path.join(QUNIT_DIR, '{}.js'.format(name)),
     qunit,
     QUnitBase,
-    viceroy_url='/qunit/test.html'
+    viceroy_url='/qunit/{}.html'.format(name)
 )
+
+
+QUnitBaseTests = build_qunit_test('test')
+QUnitAsyncTests = build_qunit_test('async')
+QUnitLogsTests = build_qunit_test('logs')
+QUnitSetTimeoutTests = build_qunit_test('setTimeout')
+QUnitSwarmInjectTests = build_qunit_test('swarminject')
