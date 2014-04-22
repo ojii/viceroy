@@ -1,20 +1,8 @@
 import contextlib
-import os
 import unittest
 from selenium.webdriver.firefox.webdriver import WebDriver
 
 from selenium.webdriver.support.wait import WebDriverWait
-
-from .utils import extract
-from .utils import slimit_node_to_str
-
-
-VICEROY_ROOT = os.path.abspath(os.path.dirname(__file__))
-VICEROY_JS_PATH = os.path.join(
-    VICEROY_ROOT,
-    'static',
-    'viceroy.js'
-)
 
 
 class JavascriptError(Exception):
@@ -64,28 +52,13 @@ class ViceroyTestCase(unittest.TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.viceroy_cache = cls.viceroy_get_results()
+        print(cls.viceroy_cache)
 
     @classmethod
     def tearDownClass(cls):
         if hasattr(cls, 'viceroy_cache'):
             del cls.viceroy_cache
         super().tearDownClass()
-
-
-def jasmine(source):
-    yield from extract(
-        source,
-        ['it'],
-        lambda node: slimit_node_to_str(node.args[0])
-    )
-
-
-def qunit(source):
-    yield from extract(
-        source,
-        ['test', 'testAsync'],
-        lambda node: slimit_node_to_str(node.args[0])
-    )
 
 
 def test_method_proxy(full_name, short_name):
@@ -106,15 +79,18 @@ def test_method_proxy(full_name, short_name):
 
 
 def build_test_case(class_name, source_file, framework,
-                    base_class=ViceroyTestCase):
+                    base_class=ViceroyTestCase, **extra_attrs):
     with open(source_file) as fobj:
         source = fobj.read()
 
     test_method_names = set(framework(source))
+    print(test_method_names)
 
     attrs = {'viceroy_source_file': source_file}
     for test_name in test_method_names:
         full_name = 'test_{}'.format(test_name)
         attrs[full_name] = test_method_proxy(full_name, test_name)
+
+    attrs.update(extra_attrs)
 
     return type(class_name, (base_class,), attrs)

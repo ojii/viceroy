@@ -15,9 +15,10 @@ setup(
         'selenium',
         'slimit',
     ],
-    test_requires=[
+    tests_require=[
         'Django',
         'flask-testing',
+        'flask',
     ],
     test_suite='viceroy.tests'
 )

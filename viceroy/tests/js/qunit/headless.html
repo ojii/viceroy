@@ -3,10 +3,12 @@
 <head>
 	<meta charset="UTF-8">
 	<title>QUnit Headless Test Suite</title>
-	<link rel="stylesheet" href="../dist/qunit.css">
-	<script src="../dist/qunit.js"></script>
-	<script src="test.js"></script>
-	<script src="deepEqual.js"></script>
+	<link rel="stylesheet" href="/qunit/dist/qunit.css">
+	<script src="/qunit/dist/qunit.js"></script>
+	<script src="/viceroy.js"></script>
+    <script src="/qunit-bridge.js"></script>
+	<script src="/qunit/test.js"></script>
+	<script src="/qunit/deepEqual.js"></script>
 	<script>
 		(function () {
 			function createCallback(logType) {
