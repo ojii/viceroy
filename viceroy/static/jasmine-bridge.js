@@ -10,7 +10,7 @@
                 for (var index = 0; index < result.failedExpectations.length; index++){
                     messages.push(result.failedExpectations[index].message);
                 }
-                VICEROY.fail(messages.join('\n'));
+                VICEROY.fail(result.description, messages.join('\n'));
             } else {
                 VICEROY.success(result.description);
             }

@@ -16,9 +16,11 @@ QUNIT_DIR = os.path.abspath(
 
 app = Flask(__name__)
 
+
 @app.route('/qunit/<path:filename>')
 def send_qunit(filename):
     return send_from_directory(QUNIT_DIR, filename)
+
 
 @app.route('/<path:filename>')
 def send_viceroy(filename):

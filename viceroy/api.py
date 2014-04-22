@@ -62,7 +62,15 @@ class ViceroyTestCase(unittest.TestCase):
 
 def test_method_proxy(full_name, short_name):
     def test_method(self):
-        result = self.viceroy_cache[short_name]
+        try:
+            result = self.viceroy_cache[short_name]
+        except KeyError:
+            if 'viceroy_javascript_error' in self.viceroy_cache:
+                result = self.viceroy_cache['viceroy_javascript_error']
+            else:
+                raise KeyError("'{}' not found in: {}.".format(
+                    short_name, ', '.join(self.viceroy_cache.keys())
+                ))
         if result['code'] == '.':
             return
         elif result['code'] == 'x':
