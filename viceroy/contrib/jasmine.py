@@ -1,11 +1,9 @@
-from viceroy.utils import extract
-from viceroy.utils import slimit_node_to_str
+from viceroy.scanner import BaseScanner
 
 
-def jasmine(source):
-    yield from extract(
-        source,
-        ['it'],
-        lambda node: slimit_node_to_str(node.args[0])
-    )
+class JasmineScanner(BaseScanner):
+    def visit_FunctionCall_xdescribe(self, node):
+        raise StopIteration()
 
+    def visit_FunctionCall_it(self, node):
+        yield self.extract_name(node.args[0])

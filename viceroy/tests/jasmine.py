@@ -6,7 +6,7 @@ from flask import send_file
 
 from viceroy.api import build_test_case
 from viceroy.constants import VICEROY_ROOT
-from viceroy.contrib.jasmine import jasmine
+from viceroy.contrib.jasmine import JasmineScanner
 from viceroy.contrib.flask import ViceroyFlaskTestCase
 
 
@@ -45,7 +45,7 @@ class JasmineBase(ViceroyFlaskTestCase):
 build_jasmine_test = lambda name: build_test_case(
     'Jasmine:{}'.format(name),
     os.path.join(JASMINE_DIR, 'spec', name),
-    jasmine,
+    JasmineScanner,
     JasmineBase,
 )
 

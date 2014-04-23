@@ -85,12 +85,14 @@ def test_method_proxy(full_name, short_name):
     return test_method
 
 
-def build_test_case(class_name, source_file, framework,
+def build_test_case(class_name, source_file, scanner_class,
                     base_class=ViceroyTestCase, **extra_attrs):
     with open(source_file) as fobj:
         source = fobj.read()
 
-    test_method_names = set(framework(source))
+    scanner = scanner_class(source)
+
+    test_method_names = set(scanner)
 
     attrs = {'viceroy_source_file': source_file}
     for test_name in test_method_names:

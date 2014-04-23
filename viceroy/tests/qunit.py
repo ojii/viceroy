@@ -5,7 +5,7 @@ from flask import send_from_directory
 
 from viceroy.api import build_test_case
 from viceroy.constants import VICEROY_ROOT
-from viceroy.contrib.qunit import qunit
+from viceroy.contrib.qunit import QUnitScanner
 from viceroy.contrib.flask import ViceroyFlaskTestCase
 
 
@@ -34,7 +34,7 @@ class QUnitBase(ViceroyFlaskTestCase):
 build_qunit_test = lambda name: build_test_case(
     'QUnit{}'.format(name.capitalize()),
     os.path.join(QUNIT_DIR, '{}.js'.format(name)),
-    qunit,
+    QUnitScanner,
     QUnitBase,
     viceroy_url='/qunit/{}.html'.format(name)
 )

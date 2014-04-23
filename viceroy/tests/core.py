@@ -9,8 +9,7 @@ from viceroy.api import JavascriptError
 from viceroy.constants import VICEROY_ROOT
 from viceroy.constants import VICEROY_JS_PATH
 from viceroy.contrib.flask import ViceroyFlaskTestCase
-from viceroy.utils import extract
-from viceroy.utils import slimit_node_to_str
+from viceroy.scanner import BaseScanner
 
 
 ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -64,37 +63,37 @@ class BaseTestCase(ViceroyFlaskTestCase):
     viceroy_flask_app = test_app
 
 
-def _extractor(node):
-    if not isinstance(node, ast.FunctionCall):
-        return None
-    if not isinstance(node.identifier, ast.DotAccessor):
-        return None
-    if not isinstance(node.identifier.identifier, ast.Identifier):
-        return None
-    if not isinstance(node.identifier.node, ast.Identifier):
-        return None
-    return '{}.{}'.format(
-        node.identifier.node.value, node.identifier.identifier.value
-    )
+class ViceroyScanner(BaseScanner):
+    names = [
+        'VICEROY.store_result',
+        'VICEROY.success',
+        'VICEROY.fail',
+        'VICEROY.skip',
+        'VICEROY.start_test'
+    ]
 
+    def visit_FunctionCall(self, node):
+        if (isinstance(node, ast.FunctionCall) and
+                isinstance(node.identifier, ast.DotAccessor) and
+                isinstance(node.identifier.identifier, ast.Identifier) and
+                isinstance(node.identifier.node, ast.Identifier)):
+            function_name = '{}.{}'.format(
+                node.identifier.node.value, node.identifier.identifier.value
+            )
+            if function_name in self.names:
+                yield self.extract_name(node.args[0])
 
-def _viceroy(source):
-    yield from extract(
-        source,
-        ['VICEROY.store_result', 'VICEROY.success', 'VICEROY.fail',
-         'VICEROY.exception', 'VICEROY.expected_failure', 'VICEROY.skip',
-         'VICEROY.start_test'],
-        lambda node: slimit_node_to_str(node.args[0]),
-        extractor=_extractor
-    )
 
 ViceroySuccessTests = build_test_case(
-    'ViceroySuccessTests', SUCCESS_TESTS_FILE_PATH, _viceroy, BaseTestCase
+    'ViceroySuccessTests',
+    SUCCESS_TESTS_FILE_PATH,
+    ViceroyScanner,
+    BaseTestCase
 )
 
 
 class ViceroyFailureTests(build_test_case('Base', FAIL_TESTS_FILE_PATH,
-                                          _viceroy, BaseTestCase)):
+                                          ViceroyScanner, BaseTestCase)):
     viceroy_flask_app = fail_app
 
     @unittest.expectedFailure

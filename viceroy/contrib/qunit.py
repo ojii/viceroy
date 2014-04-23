@@ -1,10 +1,9 @@
-from viceroy.utils import extract
-from viceroy.utils import slimit_node_to_str
+from viceroy.scanner import BaseScanner
 
 
-def qunit(source):
-    yield from extract(
-        source,
-        ['test', 'asyncTest'],
-        lambda node: slimit_node_to_str(node.args[0]),
-    )
+class QUnitScanner(BaseScanner):
+    def visit_FunctionCall_test(self, node):
+        yield self.extract_name(node.args[0])
+
+    def visit_FunctionCall_asyncTest(self, node):
+        yield self.extract_name(node.args[0])
