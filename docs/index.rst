@@ -38,8 +38,8 @@ Contents
 
     installation
     quickstart
-    javascript-api
     python-api
+    javascript-api
 
 
 Indices and tables

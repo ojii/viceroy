@@ -43,7 +43,7 @@ class JasmineBase(ViceroyFlaskTestCase):
 
 
 build_jasmine_test = lambda name: build_test_case(
-    'Jasmine{}'.format(name[:-3].capitalize()),
+    'Jasmine:{}'.format(name),
     os.path.join(JASMINE_DIR, 'spec', name),
     jasmine,
     JasmineBase,

@@ -2,12 +2,29 @@
 Javascript API
 ##############
 
-If you wish to use an unsupported Javascript testing library, you can do so
-using the Javascript and Python APIs.
 
 
-.. js:function:: viceroy_notify(failed, message)
+.. js:function:: VICEROY.start_test(test_name)
 
-    Notify Viceroy that the test method ran. ``failed`` is a boolean flag
-    indicating whether the test method failed or passed. ``message`` is the
-    error message for failed tests.
+    Notify Viceroy that a test starts. This is optional, but will result in
+    better error reporting in case the test throws an exception.
+
+
+.. js:function:: VICEROY.success(test_name)
+
+    Report ``test_name`` was successful.
+
+
+.. js:function:: VICEROY.fail(test_name, reason)
+
+    Report ``test_name`` failed with ``reason``.
+
+
+.. js:function:: VICEROY.skip(test_name, reason)
+
+    Report that ``test_name`` has been skipped.
+
+
+.. js:function:: VICEROY.done()
+
+    Indicates the test suite is done. This **must** be called.

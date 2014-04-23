@@ -29,4 +29,7 @@ def extract(source, test_method_names, get_name, extractor=_extractor):
 
 def slimit_node_to_str(node):
     s = node.to_ecma()
-    return s.strip('"\'')
+    if s[0] == s[-1] and s[0] in ["'", '"']:
+        return s[1:-1]
+    else:
+        return s

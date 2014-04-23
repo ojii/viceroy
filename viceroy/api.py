@@ -65,9 +65,12 @@ def test_method_proxy(full_name, short_name):
         if result is None:
             result = self.viceroy_cache.get('viceroy_javascript_error', None)
             if result is None:
+                keys = self.viceroy_cache.keys()
                 raise ResultNotFound(
                     'Result for {!r} not found. Available results: {}'.format(
-                        short_name, ', '.join(self.viceroy_cache.keys())
+                        short_name, ', '.join(
+                            '{!r}'.format(key) for key in keys
+                        )
                     )
                 )
         if result['code'] == '.':
