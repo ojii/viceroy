@@ -72,8 +72,6 @@ def test_method_proxy(full_name, short_name):
                 )
         if result['code'] == '.':
             return
-        elif result['code'] == 'x':
-            raise unittest.case._ExpectedFailure(result['message'])
         elif result['code'] == 'F':
             self.fail(result['message'])
         elif result['code'] == 'E':

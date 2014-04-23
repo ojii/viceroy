@@ -3,7 +3,6 @@ VICEROY = {
     'FAILURE': 'F',
     'EXCEPTION': 'E',
     'SKIP': 's',
-    'EXPECTED_FAILURE': 'x',
     'RESULTS': {},
     'DONE': false,
     '_test_name': null,
@@ -12,9 +11,6 @@ VICEROY = {
     },
     'fail': function(test_name, reason){
         VICEROY.store_result(test_name, VICEROY.FAILURE, reason);
-    },
-    'expected_failure': function(test_name){
-        VICEROY.store_result(test_name, VICEROY.EXPECTED_FAILURE, '');
     },
     'skip': function(test_name, reason){
         VICEROY.store_result(test_name, VICEROY.SKIP, reason);
