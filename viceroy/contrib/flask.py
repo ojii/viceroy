@@ -1,10 +1,23 @@
 import contextlib
 import multiprocessing
+import socket
 import time
 
 from flask.ext.testing import TestCase
 
 from viceroy.api import ViceroyTestCase
+
+
+def _server_started(port):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        sock.connect(('localhost', port))
+    except ConnectionRefusedError:
+        return False
+    else:
+        return True
+    finally:
+        sock.close()
 
 
 class ViceroyFlaskTestCase(ViceroyTestCase, TestCase):
@@ -18,31 +31,36 @@ class ViceroyFlaskTestCase(ViceroyTestCase, TestCase):
         pass
 
     @classmethod
+    def viceroy_get_flask_app(cls):
+        return cls.viceroy_flask_app
+
+    @classmethod
     @contextlib.contextmanager
     def viceroy_server(cls):
-        cls.viceroy_flask_app.config['TESTING'] = True
+        app = cls.viceroy_get_flask_app()
+        app.config['TESTING'] = True
         port = cls.viceroy_flask_port
-        cls.viceroy_flask_app.config['LIVESERVER_PORT'] = port
+        app.config['LIVESERVER_PORT'] = port
         cls.viceroy_flask_process = None
         try:
-            cls._start_flask_server()
+            cls._start_flask_server(app)
             yield port
         finally:
             cls._stop_flask_server()
 
     @classmethod
-    def _start_flask_server(cls):
+    def _start_flask_server(cls, app):
         cls.viceroy_flask_process = multiprocessing.Process(
-            target=cls.viceroy_flask_app.run, kwargs={
+            target=app.run, kwargs={
                 'port': cls.viceroy_flask_port
             }
         )
         cls.viceroy_flask_process.start()
-
-        # we must wait the server start listening
-        time.sleep(1)
+        while not _server_started(cls.viceroy_flask_port):
+            time.sleep(0.01)
 
     @classmethod
     def _stop_flask_server(cls):
         if cls.viceroy_flask_process is not None:
             cls.viceroy_flask_process.terminate()
+            cls.viceroy_flask_process.join()

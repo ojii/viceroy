@@ -3,14 +3,65 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Jasmine Spec Runner</title>
-	<link rel="stylesheet" type="text/css" href="/jasmine/dist/jasmine.css">
-	<script src="/jasmine/dist/jasmine.js"></script>
-	<script src="/jasmine/dist/jasmine-html.js"></script>
-	<script src="/jasmine/spec/helpers/BrowserFlags.js"></script>
-	<script src="/jasmine/spec/helpers/defineJasmineUnderTest.js"></script>
-	<script src="/jasmine/dist/boot.js"></script>
-    <script src="/viceroy.js"></script>
-    <script src="/jasmine-bridge.js"></script>
+	<link rel="stylesheet" type="text/css" href="/jasmine/lib/jasmine-core/jasmine.css">
+    
+    <script src="/jasmine/lib/jasmine-core/jasmine.js" type="text/javascript"></script>
+    <script src="/jasmine/lib/jasmine-core/json2.js" type="text/javascript"></script>
+    <script src="/jasmine/lib/jasmine-core/jasmine-html.js" type="text/javascript"></script>
+    <script src="/jasmine/lib/jasmine-core/boot.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/base.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/util.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/Spec.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/Env.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/JsApiReporter.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/PrettyPrinter.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/Suite.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/Any.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/CallTracker.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/Clock.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/DelayedFunctionScheduler.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/ExceptionFormatter.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/Expectation.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/ExpectationResult.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/MockDate.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/ObjectContaining.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/QueueRunner.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/ReportDispatcher.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/SpyStrategy.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/Timer.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/matchers/matchersUtil.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/matchers/requireMatchers.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/matchers/toBe.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/matchers/toBeCloseTo.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/matchers/toBeDefined.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/matchers/toBeFalsy.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/matchers/toBeGreaterThan.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/matchers/toBeLessThan.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/matchers/toBeNaN.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/matchers/toBeNull.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/matchers/toBeTruthy.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/matchers/toBeUndefined.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/matchers/toContain.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/matchers/toEqual.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/matchers/toHaveBeenCalled.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/matchers/toHaveBeenCalledWith.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/matchers/toMatch.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/matchers/toThrow.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/matchers/toThrowError.js" type="text/javascript"></script>
+    <script src="/jasmine/src/core/requireCore.js" type="text/javascript"></script>
+    <script src="/jasmine/src/html/HtmlReporter.js" type="text/javascript"></script>
+    <script src="/jasmine/src/html/HtmlSpecFilter.js" type="text/javascript"></script>
+    <script src="/jasmine/src/html/QueryString.js" type="text/javascript"></script>
+    <script src="/jasmine/src/html/ResultsNode.js" type="text/javascript"></script>
+    <script src="/jasmine/src/html/requireHtml.js" type="text/javascript"></script>
+    <script src="/jasmine/src/console/ConsoleReporter.js" type="text/javascript"></script>
+    <script src="/jasmine/src/console/requireConsole.js" type="text/javascript"></script>
+    <script src="/jasmine/src/version.js" type="text/javascript"></script>
+    <script src="/jasmine/spec/helpers/BrowserFlags.js" type="text/javascript"></script>
+    <script src="/jasmine/spec/helpers/defineJasmineUnderTest.js" type="text/javascript"></script>
+    
+    <script src="/viceroy/viceroy.js"></script>
+    <script src="/viceroy/jasmine-bridge.js"></script>
 	<script src="/spec.js"></script>
 </head>
 <body>

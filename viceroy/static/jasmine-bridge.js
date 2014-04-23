@@ -5,7 +5,7 @@
         };
 
         this.specDone = function(result){
-            if (result.failedExpectations !== 0){
+            if (result.failedExpectations.length !== 0){
                 var messages = ['Failed expectations: ' + result.failedExpectations];
                 for (var index = 0; index < result.failedExpectations.length; index++){
                     messages.push(result.failedExpectations[index].message);

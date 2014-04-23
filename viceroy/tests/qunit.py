@@ -32,7 +32,7 @@ class QUnitBase(ViceroyFlaskTestCase):
 
 
 build_qunit_test = lambda name: build_test_case(
-    'QUnitBaseTests',
+    'QUnit{}'.format(name.capitalize()),
     os.path.join(QUNIT_DIR, '{}.js'.format(name)),
     qunit,
     QUnitBase,

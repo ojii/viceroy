@@ -1,12 +1,11 @@
 import contextlib
 import unittest
-from selenium.webdriver.firefox.webdriver import WebDriver
 
+from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support.wait import WebDriverWait
 
-
-class JavascriptError(Exception):
-    pass
+from .exceptions import ResultNotFound
+from .exceptions import JavascriptError
 
 
 class ViceroyTestCase(unittest.TestCase):
@@ -62,15 +61,15 @@ class ViceroyTestCase(unittest.TestCase):
 
 def test_method_proxy(full_name, short_name):
     def test_method(self):
-        try:
-            result = self.viceroy_cache[short_name]
-        except KeyError:
-            if 'viceroy_javascript_error' in self.viceroy_cache:
-                result = self.viceroy_cache['viceroy_javascript_error']
-            else:
-                raise KeyError("'{}' not found in: {}.".format(
-                    short_name, ', '.join(self.viceroy_cache.keys())
-                ))
+        result = self.viceroy_cache.get(short_name, None)
+        if result is None:
+            result = self.viceroy_cache.get('viceroy_javascript_error', None)
+            if result is None:
+                raise ResultNotFound(
+                    'Result for {!r} not found. Available results: {}'.format(
+                        short_name, ', '.join(self.viceroy_cache.keys())
+                    )
+                )
         if result['code'] == '.':
             return
         elif result['code'] == 'x':
