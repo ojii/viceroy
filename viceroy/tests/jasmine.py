@@ -35,7 +35,9 @@ class JasmineBase(ViceroyFlaskTestCase):
         app.route('/jasmine/<path:filename>')(send_qunit)
         app.route('/viceroy/<path:filename>')(send_viceroy)
 
-        @app.route('/spec.js')
+        # jasmine has a regex that looks for this filename, so we use it
+        # instead of a more generic "spec.js"
+        @app.route('/ExceptionFormatterSpec.js')
         def send_spec():
             return send_file(cls.viceroy_source_file)
 
