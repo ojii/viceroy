@@ -7,6 +7,15 @@
 	<script src="/qunit/dist/qunit.js"></script>
 	<script src="/viceroy.js"></script>
     <script src="/qunit-bridge.js"></script>
+    <script>
+        VICEROY.delay_done = true;
+        QUnit.done(function(){
+            if (!testAutorun){
+                VICEROY.delay_done = false;
+                VICEROY.done();
+            }
+        });
+    </script>
 	<script>
 	QUnit.config.reorder = false;
 	</script>

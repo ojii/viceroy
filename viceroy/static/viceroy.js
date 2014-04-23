@@ -5,6 +5,7 @@ VICEROY = {
     'SKIP': 's',
     'RESULTS': {},
     'DONE': false,
+    'delay_done': false,
     '_test_name': null,
     'success': function(test_name){
         VICEROY.store_result(test_name, VICEROY.SUCCESS, '');
@@ -23,7 +24,9 @@ VICEROY = {
         VICEROY._test_name = null;
     },
     'done': function(){
-        VICEROY.DONE = true;
+        if (!VICEROY.delay_done){
+            VICEROY.DONE = true;
+        }
     },
     'start_test': function(test_name){
         VICEROY._test_name = test_name;
