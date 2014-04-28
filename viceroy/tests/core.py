@@ -6,7 +6,6 @@ from flask import Flask
 
 from viceroy.api import build_test_case
 from viceroy.api import JavascriptError
-from viceroy.constants import VICEROY_ROOT
 from viceroy.constants import VICEROY_JS_PATH
 from viceroy.contrib.flask import ViceroyFlaskTestCase
 from viceroy.scanner import BaseScanner
@@ -20,7 +19,7 @@ FAIL_TESTS_FILE_PATH = os.path.join(
     ROOT_DIR, 'js', 'viceroy', 'fail.js'
 )
 
-with open(os.path.join(VICEROY_ROOT, 'static', 'viceroy.html')) as fobj:
+with open(os.path.join(ROOT_DIR, 'js', 'viceroy', 'viceroy.html')) as fobj:
     VICEROY_HTML = fobj.read()
 
 with open(VICEROY_JS_PATH) as fobj:

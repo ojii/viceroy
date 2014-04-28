@@ -1,0 +1,11 @@
+{% load staticfiles %}
+<html>
+<head>
+    {% if VICEROY_TESTING %}
+    <script src="/viceroy/viceroy.js" type="application/javascript"></script>
+    <script src="{% static 'tests.js' %}" type="application/javascript"></script>
+    {% endif %}
+</head>
+<body>
+</body>
+</html>
