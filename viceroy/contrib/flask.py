@@ -1,4 +1,5 @@
 import contextlib
+import logging
 import multiprocessing
 import socket
 import time
@@ -20,9 +21,17 @@ def _server_started(port):
         sock.close()
 
 
+def run_app(app, port, silent=True):
+    if silent:
+        log = logging.getLogger('werkzeug')
+        log.setLevel(logging.ERROR)
+    app.run(port=port)
+
+
 class ViceroyFlaskTestCase(ViceroyTestCase, TestCase):
     viceroy_flask_app = None
     viceroy_flask_port = 5000
+    viceroy_flask_silent = True
 
     def _pre_setup(self):
         pass
@@ -51,8 +60,10 @@ class ViceroyFlaskTestCase(ViceroyTestCase, TestCase):
     @classmethod
     def _start_flask_server(cls, app):
         cls.viceroy_flask_process = multiprocessing.Process(
-            target=app.run, kwargs={
-                'port': cls.viceroy_flask_port
+            target=run_app, kwargs={
+                'app': app,
+                'port': cls.viceroy_flask_port,
+                'silent': cls.viceroy_flask_silent
             }
         )
         cls.viceroy_flask_process.start()
