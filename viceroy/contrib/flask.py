@@ -48,6 +48,7 @@ class ViceroyFlaskTestCase(ViceroyTestCase, TestCase):
     def viceroy_server(cls):
         app = cls.viceroy_get_flask_app()
         app.config['TESTING'] = True
+        app.config['VICEROY_TESTING'] = True
         port = cls.viceroy_flask_port
         app.config['LIVESERVER_PORT'] = port
         cls.viceroy_flask_process = None

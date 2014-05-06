@@ -14,6 +14,8 @@ Viceroy Documentation
     supported yet. Feel free to give it a try, but don't expect this to be
     production ready yet.
 
+    I will likely change 100% of the APIs in new releases until I hit 1.0.
+
 
 ***************
 What is Viceroy
@@ -28,6 +30,12 @@ that would like to test their Javascript.
 For now, QUnit and Jasmine are supported, but you can add support for your
 preferred testing library if you want to.
 
+As for Python frameworks, Flask and Django are supported out of the box, but
+again you may feel free to add support for the framework of your choice.
+
+Note that how to extend Viceroy is not yet documented, as the API is not
+finalized yet.
+
 
 ********
 Contents
@@ -38,9 +46,6 @@ Contents
 
     installation
     quickstart
-    python-api
-    javascript-api
-
 
 Indices and tables
 ==================

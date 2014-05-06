@@ -86,7 +86,7 @@ def test_method_proxy(full_name, short_name):
 
 
 def build_test_case(class_name, source_file, scanner_class,
-                    base_class=ViceroyTestCase, **extra_attrs):
+                    base_class, **extra_attrs):
     with open(source_file) as fobj:
         source = fobj.read()
 
