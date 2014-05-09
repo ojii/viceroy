@@ -21,5 +21,10 @@ setup(
         'flask',
     ],
     test_suite='viceroy.tests',
+    include_package_data=True,
     zip_safe=False,
+    classifiers=[
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+    ],
 )

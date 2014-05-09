@@ -1,0 +1,2 @@
+recursive-include viceroy/static *
+recursive-include viceroy/tests/js *
