@@ -111,3 +111,13 @@ Testing in Flask works pretty much the same as :ref:`django`, but substitute
 the ``ViceroyDjangoTestCase`` with ``ViceroyFlaskTestCase`` and make sure to
 pass your Flask app as the ``viceroy_flask_app`` keyword argument to
 ``build_test_case``.
+
+
+Configuration
+=============
+
+Besides the required ``viceroy_flask_app`` extra keyword argument to
+``build_test_case`` there are the following optional configuration values:
+
+* ``viceroy_flask_port``: Port to use, default ``5000``.
+* ``viceroy_flask_silent``: Whether to hide the Werkzeug log, default ``True``.

@@ -20,5 +20,6 @@ setup(
         'flask-testing',
         'flask',
     ],
-    test_suite='viceroy.tests'
+    test_suite='viceroy.tests',
+    zip_safe=False,
 )
