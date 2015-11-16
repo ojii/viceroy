@@ -2,6 +2,7 @@ import os
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'viceroy.tests.djangoapp.settings'
 
+import django
 from django.test.runner import setup_databases
 
 from viceroy.api import build_test_case
@@ -15,6 +16,7 @@ test_file = os.path.join(root, 'djangoapp', 'static', 'tests.js')
 class DatabaseTestCase(ViceroyDjangoTestCase):
     @classmethod
     def setUpClass(cls):
+        django.setup()
         cls.old_config = setup_databases(0, False)
         super().setUpClass()
 

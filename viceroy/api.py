@@ -1,7 +1,8 @@
 import contextlib
+import os
 import unittest
 
-from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 
 from .exceptions import ResultNotFound
@@ -11,7 +12,7 @@ from .exceptions import JavascriptError
 class ViceroyTestCase(unittest.TestCase):
     viceroy_url = '/'
     viceroy_timeout = 30
-    viceroy_driver_class = WebDriver
+    viceroy_driver_class = None
 
     @classmethod
     @contextlib.contextmanager
@@ -21,14 +22,20 @@ class ViceroyTestCase(unittest.TestCase):
     @classmethod
     @contextlib.contextmanager
     def viceroy_driver(cls):
-        driver = None
+        if isinstance(cls.viceroy_driver_class, webdriver.Remote):
+            driver_class = cls.viceroy_driver_class
+        elif isinstance(cls.viceroy_driver_class, str):
+            driver_class = getattr(webdriver, cls.viceroy_driver_class)
+        elif 'SELENIUM_WEBDRIVER' in os.environ:
+            driver_class = getattr(webdriver, os.environ['SELENIUM_WEBDRIVER'])
+        else:
+            driver_class = webdriver.Firefox
+        driver = driver_class()
         try:
-            driver = cls.viceroy_driver_class()
+
             yield driver
         finally:
-            if driver is not None:
-                driver.quit()
-
+            driver.quit()
 
     @classmethod
     def viceroy_get_results(cls):

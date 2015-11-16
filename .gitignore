@@ -7,4 +7,4 @@ __pycache__
 /docs/_build/
 /*.egg
 /dist/
-
+ghostdriver.log

@@ -1,5 +1,4 @@
 import warnings
-from slimit.ast import Identifier
 from slimit.ast import String
 from slimit.parser import Parser
 
@@ -9,6 +8,8 @@ class UnsupportedIdentifier(Warning):
 
 
 class BaseScanner(object):
+    test_methods = {}
+
     def __init__(self, source):
         self.tree = Parser().parse(source)
 
@@ -18,23 +19,22 @@ class BaseScanner(object):
 
     def visit(self, node):
         method_name = 'visit_{}'.format(node.__class__.__name__)
-        yield from getattr(self, method_name, self.visit_children)(node)
+        handler = getattr(self, method_name, self.visit_children)
+        yield from handler(node)
 
     def visit_children(self, node):
         for child in node:
             yield from self.visit(child)
 
     def visit_FunctionCall(self, node):
-        if isinstance(node.identifier, Identifier):
-            function_name = node.identifier.value
-            method_name = 'visit_FunctionCall_{}'.format(function_name)
-            method = getattr(self, method_name, None)
-            if method is not None:
-                yield from method(node)
+        key = node.identifier.to_ecma()
+        if key in self.test_methods:
+            argument = self.test_methods[key]
+            if callable(argument):
+                yield argument(node)
             else:
-                yield from self.visit_children(node)
-        else:
-            yield from self.visit_children(node)
+                yield self.extract_name(node.args[argument])
+        yield from self.visit_children(node)
 
     def extract_name(self, node):
         if isinstance(node, String):

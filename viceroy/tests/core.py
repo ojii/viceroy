@@ -1,7 +1,6 @@
 import os
 import unittest
 
-from slimit import ast
 from flask import Flask
 
 from viceroy.api import build_test_case
@@ -63,24 +62,13 @@ class BaseTestCase(ViceroyFlaskTestCase):
 
 
 class ViceroyScanner(BaseScanner):
-    names = [
-        'VICEROY.store_result',
-        'VICEROY.success',
-        'VICEROY.fail',
-        'VICEROY.skip',
-        'VICEROY.start_test'
-    ]
-
-    def visit_FunctionCall(self, node):
-        if (isinstance(node, ast.FunctionCall) and
-                isinstance(node.identifier, ast.DotAccessor) and
-                isinstance(node.identifier.identifier, ast.Identifier) and
-                isinstance(node.identifier.node, ast.Identifier)):
-            function_name = '{}.{}'.format(
-                node.identifier.node.value, node.identifier.identifier.value
-            )
-            if function_name in self.names:
-                yield self.extract_name(node.args[0])
+    test_methods = {
+        'VICEROY.store_result': 0,
+        'VICEROY.success': 0,
+        'VICEROY.fail': 0,
+        'VICEROY.skip': 0,
+        'VICEROY.start_test': 0,
+    }
 
 
 ViceroySuccessTests = build_test_case(
@@ -101,3 +89,29 @@ class ViceroyFailureTests(build_test_case('Base', FAIL_TESTS_FILE_PATH,
 
     def test_test_error(self):
         self.assertRaises(JavascriptError, super().test_test_error)
+
+
+class TestScanner(unittest.TestCase):
+    def test_simple(self):
+        attrs = {
+            'test_methods': {
+                'test': 0
+            }
+        }
+        cls = type('TestScanner', (BaseScanner, ), attrs)
+        scanner = cls("test('foo')")
+        names = list(scanner)
+        self.assertEqual(len(names), 1)
+        self.assertEqual(names[0], 'foo')
+
+    def test_namespaced(self):
+        attrs = {
+            'test_methods': {
+                'namespace.test': 0
+            }
+        }
+        cls = type('TestScanner', (BaseScanner, ), attrs)
+        scanner = cls("namespace.test('foo')")
+        names = list(scanner)
+        self.assertEqual(len(names), 1)
+        self.assertEqual(names[0], 'foo')

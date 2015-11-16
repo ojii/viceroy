@@ -1,12 +1,13 @@
 import contextlib
 
+import django
 from django.conf import settings
-from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from viceroy.api import ViceroyTestCase
 
 
-class ViceroyDjangoTestCase(ViceroyTestCase, LiveServerTestCase):
+class ViceroyDjangoTestCase(ViceroyTestCase, StaticLiveServerTestCase):
     @classmethod
     @contextlib.contextmanager
     def viceroy_server(cls):
@@ -14,6 +15,7 @@ class ViceroyDjangoTestCase(ViceroyTestCase, LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
+        django.setup()
         settings.VICEROY_TESTING = True
         super().setUpClass()
 
