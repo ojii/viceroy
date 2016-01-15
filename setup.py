@@ -12,7 +12,7 @@ setup(
     author_email='ojiidotch@gmail.com',
     description='',
     install_requires=[
-        'selenium',
+        'selenium!=2.49.0',
         'slimit',
     ],
     tests_require=[
@@ -20,11 +20,11 @@ setup(
         'flask-testing',
         'flask',
     ],
-    test_suite='viceroy.tests',
     include_package_data=True,
     zip_safe=False,
     classifiers=[
-        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
     ],
 )

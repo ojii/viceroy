@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import contextlib
 import logging
 import multiprocessing
@@ -7,6 +8,11 @@ import time
 from flask.ext.testing import TestCase
 
 from viceroy.api import ViceroyTestCase
+
+try:
+    ConnectionRefusedError
+except NameError:
+    ConnectionRefusedError = socket.error
 
 
 def _server_started(port):
