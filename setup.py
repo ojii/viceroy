@@ -12,7 +12,7 @@ setup(
     author_email='ojiidotch@gmail.com',
     description='',
     install_requires=[
-        'selenium',
+        'selenium!=2.49.0',
         'slimit',
     ],
     tests_require=[

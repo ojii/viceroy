@@ -15,16 +15,19 @@ class BaseScanner(object):
 
     def __iter__(self):
         for node in self.tree:
-            yield from self.visit(node)
+            for foo in self.visit(node):
+                yield foo
 
     def visit(self, node):
         method_name = 'visit_{}'.format(node.__class__.__name__)
         handler = getattr(self, method_name, self.visit_children)
-        yield from handler(node)
+        for foo in handler(node):
+            yield foo
 
     def visit_children(self, node):
         for child in node:
-            yield from self.visit(child)
+            for foo in self.visit(child):
+                yield foo
 
     def visit_FunctionCall(self, node):
         key = node.identifier.to_ecma()
@@ -34,7 +37,8 @@ class BaseScanner(object):
                 yield argument(node)
             else:
                 yield self.extract_name(node.args[argument])
-        yield from self.visit_children(node)
+        for foo in self.visit_children(node):
+            yield foo
 
     def extract_name(self, node):
         if isinstance(node, String):

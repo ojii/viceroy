@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import os
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'viceroy.tests.djangoapp.settings'
@@ -18,12 +19,12 @@ class DatabaseTestCase(ViceroyDjangoTestCase):
     def setUpClass(cls):
         django.setup()
         cls.old_config = setup_databases(0, False)
-        super().setUpClass()
+        super(DatabaseTestCase, cls).setUpClass()
 
     @classmethod
     def tearDownClass(cls):
-        super().tearDownClass()
-        old_names, mirrors = cls.old_config
+        super(DatabaseTestCase, cls).tearDownClass()
+        old_names = cls.old_config
         for connection, old_name, destroy in old_names:
             if destroy:
                 connection.creation.destroy_test_db(old_name, verbosity=0)

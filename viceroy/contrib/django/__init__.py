@@ -17,9 +17,9 @@ class ViceroyDjangoTestCase(ViceroyTestCase, StaticLiveServerTestCase):
     def setUpClass(cls):
         django.setup()
         settings.VICEROY_TESTING = True
-        super().setUpClass()
+        super(ViceroyDjangoTestCase, cls).setUpClass()
 
     @classmethod
     def tearDownClass(cls):
-        super().tearDownClass()
+        super(ViceroyDjangoTestCase, cls).tearDownClass()
         settings.VICEROY_TESTING = False

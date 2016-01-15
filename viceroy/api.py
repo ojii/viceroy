@@ -56,14 +56,14 @@ class ViceroyTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        super().setUpClass()
+        super(ViceroyTestCase, cls).setUpClass()
         cls.viceroy_cache = cls.viceroy_get_results()
 
     @classmethod
     def tearDownClass(cls):
         if hasattr(cls, 'viceroy_cache'):
             del cls.viceroy_cache
-        super().tearDownClass()
+        super(ViceroyTestCase, cls).tearDownClass()
 
 
 def test_method_proxy(full_name, short_name):

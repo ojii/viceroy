@@ -88,7 +88,10 @@ class ViceroyFailureTests(build_test_case('Base', FAIL_TESTS_FILE_PATH,
         super().test_test_fail()
 
     def test_test_error(self):
-        self.assertRaises(JavascriptError, super().test_test_error)
+        self.assertRaises(
+            JavascriptError,
+            super(ViceroyFailureTests, self).test_test_error
+        )
 
 
 class TestScanner(unittest.TestCase):
