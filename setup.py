@@ -20,12 +20,10 @@ setup(
         'flask-testing',
         'flask',
     ],
-    test_suite='viceroy.tests',
     include_package_data=True,
     zip_safe=False,
     classifiers=[
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
     ],

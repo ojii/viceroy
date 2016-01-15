@@ -8,7 +8,7 @@ from django.test.runner import setup_databases
 
 from viceroy.api import build_test_case
 from viceroy.contrib.django import ViceroyDjangoTestCase
-from .core import ViceroyScanner
+from .utils import ViceroyScanner
 
 root = os.path.abspath(os.path.dirname(__file__))
 test_file = os.path.join(root, 'djangoapp', 'static', 'tests.js')

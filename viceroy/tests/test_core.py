@@ -8,7 +8,7 @@ from viceroy.api import JavascriptError
 from viceroy.constants import VICEROY_JS_PATH
 from viceroy.contrib.flask import ViceroyFlaskTestCase
 from viceroy.scanner import BaseScanner
-
+from .utils import ViceroyScanner
 
 ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
 SUCCESS_TESTS_FILE_PATH = os.path.join(
@@ -60,17 +60,6 @@ def fail():
 class BaseTestCase(ViceroyFlaskTestCase):
     viceroy_flask_app = test_app
 
-
-class ViceroyScanner(BaseScanner):
-    test_methods = {
-        'VICEROY.store_result': 0,
-        'VICEROY.success': 0,
-        'VICEROY.fail': 0,
-        'VICEROY.skip': 0,
-        'VICEROY.start_test': 0,
-    }
-
-
 ViceroySuccessTests = build_test_case(
     'ViceroySuccessTests',
     SUCCESS_TESTS_FILE_PATH,
@@ -85,7 +74,7 @@ class ViceroyFailureTests(build_test_case('Base', FAIL_TESTS_FILE_PATH,
 
     @unittest.expectedFailure
     def test_test_fail(self):
-        super().test_test_fail()
+        super(ViceroyFailureTests, self).test_test_fail()
 
     def test_test_error(self):
         self.assertRaises(

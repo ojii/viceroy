@@ -9,6 +9,11 @@ from flask.ext.testing import TestCase
 
 from viceroy.api import ViceroyTestCase
 
+try:
+    ConnectionRefusedError
+except NameError:
+    ConnectionRefusedError = socket.error
+
 
 def _server_started(port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
