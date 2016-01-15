@@ -1,5 +1,6 @@
 sudo: false
 language: python
+cache: pip
 python:
     - 2.7
     - 3.4
@@ -8,7 +9,7 @@ before_install:
     - "export DISPLAY=:99.0"
     - "sh -e /etc/init.d/xvfb start"
 install:
-    - "pip install django flask flask-testing 'selenium!=2.48.0' slimit nose"
+    - "pip install -U django flask flask-testing 'selenium!=2.48.0' slimit nose"
     - "pip uninstall ply -y"
     - "pip install ply==3.4"
 script: nosetests viceroy/tests/ 
